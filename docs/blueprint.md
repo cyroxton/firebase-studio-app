@@ -1,0 +1,92 @@
+# **App Name**: Task Canvas
+
+## Core Features:
+
+- Task Display: Display tasks in a clear, list format.
+- Task Input: Allow users to add new tasks with descriptions.
+- Task Completion: Enable users to mark tasks as complete.
+- Task Prioritization: Allow users to set priority levels for each task.
+- AI Priority Suggestions: Suggest priority levels for tasks using an AI tool based on keywords in the task description.
+
+## Style Guidelines:
+
+- Dominant dark theme: Deep black (#0A0A0A) with vibrant accents using a magenta (#FF00FF) to cyan (#00FFFF) gradient.
+- Accent color: Use a vibrant purple (#A020F0) for interactive elements and highlights.
+- Titles: Use Playfair Display (semi-bold) for an elegant, neo-retro contrast.
+- Body text: Use Nunito (light to regular) for optimal readability on OLED screens.
+- Use clear, modern icons with a thin stroke for a minimalist aesthetic.
+- Employ a flexible grid system for responsive design across devices.
+- Incorporate subtle animations for task completion and transitions to provide a smooth user experience.
+
+## Original User Request:
+**Objectif** : Concevoir une application de gestion des tâches **cross-platform** (iOS/Android) intégrant les dernières tendances UI/UX de 2025, avec un stack technologique performant et des choix design cohérents.  
+
+---
+
+## **Design System**  
+### Typographie  
+- **Titres** : *Playfair Display* (variante semi-bold) pour un contraste élégant inspiré du néo-rétro[2].  
+- **Corps de texte** : *Nunito* (light à regular) pour sa lisibilité optimale sur écrans OLED.  
+- **Éléments interactifs** : *Zefir Brush* en version vectorielle pour des boutons organiques[2].  
+
+### Palette Chromatique  
+- **Thème sombre dominant** : Noir profond (#0A0A0A) avec accents vibrants (dégradé magenta #FF00FF → cyan #00FFFF)[3].  
+- **Système de couleurs adaptatif** : Modulation automatique de la saturation selon l’heure (API *Device Local Time*).  
+
+### Principes d'Animation  
+- **Transitions 3D** : Rotation fluide des éléments (axe Y à 15°) via React Three Fiber.  
+- **Micro-interactions** : Effets de particules WebGL lors de la validation de tâches.  
+- **Feedback haptique** : Vibrations différenciées (court/long) selon la priorité des tâches.  
+
+---
+
+## **Stack Technologique**  
+### Frontend  
+- **Framework** : React Native 0.80 (architecture Hermes optimisée)  
+- **Gestion d'état** : Redux Toolkit 2.0 + persistage local  
+- **Navigation** : React Navigation 7 (transitions natives iOS/Android)  
+- **Animations** :  
+  - Reanimated 3 (gestures complexes)  
+  - React Three Fiber 9 (éléments 3D interactifs)  
+  - Lottie 5 (intégration d’animations vectorielles)  
+
+### Styling  
+- **Moteur** : Styled-Components 7 + thème dynamique  
+- **Système de grille** : Flexbox + calculs de densité d’écran  
+
+### Backend  
+- **Authentification** : JWT + OAuth2 via Auth0  
+- **Stockage local** : AsyncStorage chiffré (algorithme AES-256)  
+- **Synchronisation cloud** : Configuration manuelle (Firebase/AppWrite)  
+
+### Base de Données  
+- **Locale** : Realm 12 (requêtes offline-first)  
+- **Cloud** : PostgreSQL 16 (architecture clusterée)  
+
+---
+
+## **Fonctionnalités Clés**  
+1. **Projection 3D des tâches** : Visualisation spatiale via gyroscope (Three.js)  
+2. **Mode Focus Dynamique** : Flou gaussien progressif sur les tâches non prioritaires  
+3. **Système de Récompenses** : Jardin virtuel génératif (WebGL) évoluant avec les objectifs  
+4. **Personnalisation Avancée** : Éditeur de textures intégré pour les arrière-plans  
+
+---
+
+## **Workflow de Développement**  
+1. **Prototypage** : Framer Motion + Figma (auto-layout v8)  
+2. **Tests Utilisateurs** : Suite Playwright 3.5 (scénarios multi-devices)  
+3. **CI/CD** : GitHub Actions + déploiement exponentiel sur App Center  
+4. **Monitoring** : Sentry 8 + tableau de bord de performance temps réel  
+
+---
+
+## **Exigences Techniques**  
+- **Compatibilité** : Support des écrans pliables (API Samsung Flex)  
+- **Accessibilité** : Ratio de contraste 4.5:1 minimum (outil Stark)  
+- **Performance** : ≤ 2s de TTI (Time To Interactive) sur réseaux 4G  
+
+*Inspirations techniques* : Analyse des patterns Capptivate.co[5] et architectures Yalantis[5].  
+
+Ce prompt intègre les tendances 2025 en matière de **design émotionnel, **expériences cross-platform , et performances graphiques , tout en restant compatible avec les standards actuels de développement mobile.
+  
