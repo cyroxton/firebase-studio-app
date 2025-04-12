@@ -111,11 +111,20 @@ export default function Home() {
   };
 
   async function getPrioritySuggestion(description: string) {
-    const suggestion = await suggestTaskPriority({taskDescription: description});
-    if (suggestion) {
-      setPrioritySuggestion({
-        priority: suggestion.suggestedPriority,
-        reasoning: suggestion.reasoning,
+    try {
+      const suggestion = await suggestTaskPriority({taskDescription: description});
+      if (suggestion) {
+        setPrioritySuggestion({
+          priority: suggestion.suggestedPriority,
+          reasoning: suggestion.reasoning,
+        });
+      }
+    } catch (error) {
+      console.error('Failed to get priority suggestion:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to get AI priority suggestion. Please try again.',
+        variant: 'destructive',
       });
     }
   }
@@ -174,6 +183,17 @@ export default function Home() {
     );
   };
 
+  useEffect(() => {
+    const storedTasks = localStorage.getItem('tasks');
+    if (storedTasks) {
+      setTasks(JSON.parse(storedTasks));
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+  }, [tasks]);
+
   return (
     <main
       className={cn(
@@ -182,7 +202,7 @@ export default function Home() {
       )}
     >
       <h1 className="text-4xl font-semibold mb-6">
-        <span className="gradient-text-name">Rappel de MAMAN CELI</span> 🥰
+        <span className="gradient-text-name">Rappel de MAMAN CELI</span>{' '}🥰
       </h1>
 
       <div className="w-full max-w-md">
