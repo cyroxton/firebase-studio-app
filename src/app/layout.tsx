@@ -17,7 +17,7 @@ const nunito = Nunito({
 });
 
 export const metadata: Metadata = {
-  title: 'Task Canvas',
+  title: 'Rappel de MAMAN CELI 🥰',
   description: 'A Task Management App',
 };
 

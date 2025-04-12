@@ -18,6 +18,7 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import {suggestTaskPriority} from '@/ai/flows/suggest-task-priority';
+import {DragDropContext, Droppable, Draggable} from 'react-beautiful-dnd';
 
 type Task = {
   id: string;
@@ -78,9 +79,21 @@ export default function Home() {
     }
   }
 
+  const onDragEnd = result => {
+    if (!result.destination) {
+      return;
+    }
+
+    const items = Array.from(tasks);
+    const [reorderedItem] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, reorderedItem);
+
+    setTasks(items);
+  };
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-start p-24">
-      <h1 className="text-4xl font-semibold mb-6 gradient-text">Task Canvas</h1>
+      <h1 className="text-4xl font-semibold mb-6 gradient-text">Rappel de MAMAN CELI 🥰</h1>
 
       <div className="w-full max-w-md">
         <div className="flex flex-col mb-4">
@@ -129,19 +142,36 @@ export default function Home() {
           </div>
         </div>
 
-        <div>
-          {tasks.map(task => (
-            <TaskItem
-              key={task.id}
-              id={task.id}
-              description={task.description}
-              priority={task.priority}
-              completed={task.completed}
-              onComplete={completeTask}
-              onPriorityChange={changeTaskPriority}
-            />
-          ))}
-        </div>
+        <DragDropContext onDragEnd={onDragEnd}>
+          <Droppable droppableId="tasks">
+            {provided => (
+              <div {...provided.droppableProps} ref={provided.innerRef}>
+                {tasks.map((task, index) => (
+                  <Draggable key={task.id} draggableId={task.id} index={index}>
+                    {provided => (
+                      <div
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+                      >
+                        <TaskItem
+                          key={task.id}
+                          id={task.id}
+                          description={task.description}
+                          priority={task.priority}
+                          completed={task.completed}
+                          onComplete={completeTask}
+                          onPriorityChange={changeTaskPriority}
+                        />
+                      </div>
+                    )}
+                  </Draggable>
+                ))}
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+        </DragDropContext>
       </div>
     </main>
   );
