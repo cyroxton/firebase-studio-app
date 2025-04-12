@@ -366,7 +366,6 @@ export default function Home() {
             id="dark-mode"
             checked={darkMode}
             onCheckedChange={toggleDarkMode}
-            className="shadow-depth"
           />
           <label
             htmlFor="dark-mode"
