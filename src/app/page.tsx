@@ -21,6 +21,7 @@ import {suggestTaskPriority} from '@/ai/flows/suggest-task-priority';
 import {DragDropContext, Droppable, Draggable} from 'react-beautiful-dnd';
 import {useToast} from '@/hooks/use-toast';
 import {Switch} from "@/components/ui/switch";
+import {cn} from "@/lib/utils";
 
 type Task = {
   id: string;
@@ -35,9 +36,20 @@ export default function Home() {
   const [prioritySuggestion, setPrioritySuggestion] = useState<
     {priority: 'low' | 'medium' | 'high'; reasoning: string} | null
   >(null);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const {toast} = useToast();
   const [darkMode, setDarkMode] = useState(false);
+
+  useEffect(() => {
+        // Get the user's preference from localStorage
+        const storedDarkMode = localStorage.getItem('darkMode') === 'true';
+        setDarkMode(storedDarkMode);
+
+        // Add or remove the "dark" class based on localStorage
+        if (storedDarkMode) {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+  }, []);
 
   useEffect(() => {
     if (newTaskDescription) {
@@ -99,8 +111,20 @@ export default function Home() {
     setTasks(items);
   };
 
+    const toggleDarkMode = (checked: boolean) => {
+        setDarkMode(checked);
+        localStorage.setItem('darkMode', checked.toString());
+
+        // Add or remove the "dark" class based on the switch
+        if (checked) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    };
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-start p-24">
+    <main className={cn("flex min-h-screen flex-col items-center justify-start p-24", darkMode ? "dark" : "")}>
       <h1 className="text-4xl font-semibold mb-6">
         <span className="gradient-text">Rappel de MAMAN CELI</span> 🥰
       </h1>
@@ -142,7 +166,19 @@ export default function Home() {
                   </AlertDialogHeader>
                   <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={() => setIsDialogOpen(false)}>
+                    <AlertDialogAction onClick={() => {
+                      setTasks(prevTasks => {
+                        const newTask: Task = {
+                          id: crypto.randomUUID(),
+                          description: newTaskDescription,
+                          priority: prioritySuggestion?.priority || 'medium',
+                          completed: false,
+                        };
+                        return [...prevTasks, newTask];
+                      });
+                      setNewTaskDescription('');
+                      setPrioritySuggestion(null);
+                    }}>
                       Accept
                     </AlertDialogAction>
                   </AlertDialogFooter>
@@ -186,9 +222,7 @@ export default function Home() {
                 <Switch
                   id="dark-mode"
                   checked={darkMode}
-                  onCheckedChange={(checked) => {
-                    setDarkMode(checked);
-                  }}
+                  onCheckedChange={toggleDarkMode}
                 />
                 <label
                   htmlFor="dark-mode"
@@ -201,4 +235,3 @@ export default function Home() {
     </main>
   );
 }
-
