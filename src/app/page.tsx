@@ -175,9 +175,14 @@ export default function Home() {
   };
 
   return (
-    <main className={cn('flex min-h-screen flex-col items-center justify-start p-24', darkMode ? 'dark' : '')}>
+    <main
+      className={cn(
+        'flex min-h-screen flex-col items-center justify-start p-24',
+        darkMode ? 'dark' : 'light'
+      )}
+    >
       <h1 className="text-4xl font-semibold mb-6">
-        <span className="gradient-text">Rappel de MAMAN CELI</span> 🥰
+        <span className="gradient-text-name">Rappel de MAMAN CELI</span> 🥰
       </h1>
 
       <div className="w-full max-w-md">
@@ -256,24 +261,26 @@ export default function Home() {
                   </AlertDialogHeader>
                   <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={() => {
-                      setTasks(prevTasks => {
-                        const newTask: Task = {
-                          id: crypto.randomUUID(),
-                          description: newTaskDescription,
-                          priority: prioritySuggestion?.priority || 'medium',
-                          completed: false,
-                          subtasks: [],
-                          dueDate: selectedDueDate,
-                          category: selectedCategory,
-                        };
-                        return [...prevTasks, newTask];
-                      });
-                      setNewTaskDescription('');
-                      setPrioritySuggestion(null);
-                      setSelectedDueDate(undefined);
-                    }}>
-                      Accept
+                    <AlertDialogAction
+                      onClick={() => {
+                        setTasks(prevTasks => {
+                          const newTask: Task = {
+                            id: crypto.randomUUID(),
+                            description: newTaskDescription,
+                            priority: prioritySuggestion?.priority || 'medium',
+                            completed: false,
+                            subtasks: [],
+                            dueDate: selectedDueDate,
+                            category: selectedCategory,
+                          };
+                          return [...prevTasks, newTask];
+                        });
+                        setNewTaskDescription('');
+                        setPrioritySuggestion(null);
+                        setSelectedDueDate(undefined);
+                      }}
+                    >
+                      Validate
                     </AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>
@@ -335,7 +342,12 @@ export default function Home() {
         </DragDropContext>
 
         <div className="flex items-center space-x-2 mt-4">
-          <Switch id="dark-mode" checked={darkMode} onCheckedChange={toggleDarkMode} className="shadow-depth" />
+          <Switch
+            id="dark-mode"
+            checked={darkMode}
+            onCheckedChange={toggleDarkMode}
+            className="shadow-depth"
+          />
           <label
             htmlFor="dark-mode"
             className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"

@@ -16,7 +16,7 @@
     --secondary-foreground: 0 0% 98%;
     --muted: 0 0% 14.9%;
     --muted-foreground: 0 0% 63.9%;
-    --accent: 144, 80%, 40%;
+    --accent: 160 80% 40%;
     --accent-foreground: 0 0% 98%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
@@ -37,6 +37,28 @@
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .light {
+    --background: 0 0% 98%;
+    --foreground: 15 0% 6%;
+    --card: 0 0% 98%;
+    --card-foreground: 15 0% 6%;
+    --popover: 0 0% 98%;
+    --popover-foreground: 15 0% 6%;
+    --primary: 267 80% 40%;
+    --primary-foreground: 0 0% 6%;
+    --secondary: 0 0% 85%;
+    --secondary-foreground: 0 0% 9%;
+    --muted: 0 0% 85%;
+    --muted-foreground: 0 0% 63.9%;
+    --accent: 160 80% 40%;
+    --accent-foreground: 0 0% 6%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 85%;
+    --input: 0 0% 85%;
+    --ring: 267 80% 40%;
   }
 }
 
@@ -171,4 +193,11 @@
 /* Subtle shadow for depth */
 .shadow-depth {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.gradient-text-name {
+  background: linear-gradient(to right, #ff00ff, #00ffff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
