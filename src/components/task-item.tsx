@@ -9,6 +9,10 @@ interface TaskItemProps {
   completed: boolean;
   onComplete: (id: string) => void;
   onPriorityChange: (id: string, priority: 'low' | 'medium' | 'high') => void;
+  subtasks: {id: string; description: string; completed: boolean}[];
+  onCompleteSubtask: (taskId: string, subtaskId: string) => void;
+  dueDate?: Date;
+  category: string;
 }
 
 const TaskItem: React.FC<TaskItemProps> = ({
@@ -18,6 +22,10 @@ const TaskItem: React.FC<TaskItemProps> = ({
   completed,
   onComplete,
   onPriorityChange,
+  subtasks,
+  onCompleteSubtask,
+  dueDate,
+  category,
 }) => {
   const [isCompleted, setIsCompleted] = useState(completed);
 
@@ -55,6 +63,30 @@ const TaskItem: React.FC<TaskItemProps> = ({
           </select>
         </div>
       </div>
+
+      {dueDate && (
+        <div className="due-date">
+          Due Date: {dueDate.toLocaleDateString()}
+        </div>
+      )}
+
+      <div className="category-tag">
+        Category: {category}
+      </div>
+
+      {subtasks.map(subtask => (
+        <div key={subtask.id} className="subtask-item">
+          <label className="flex items-center">
+            <input
+              type="checkbox"
+              checked={subtask.completed}
+              onChange={() => onCompleteSubtask(id, subtask.id)}
+              className="mr-2 h-4 w-4 accent-purple-a020f0"
+            />
+            <span>{subtask.description}</span>
+          </label>
+        </div>
+      ))}
     </div>
   );
 };

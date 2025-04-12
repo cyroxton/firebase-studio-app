@@ -109,3 +109,66 @@
 .dark-mode {
   @apply bg-gray-800 text-white;
 }
+
+/* New styles for subtasks, due dates, and categories */
+.subtask-item {
+  @apply bg-muted rounded-md p-2 ml-4 mb-1;
+}
+
+.due-date {
+  @apply text-sm text-muted-foreground mt-1;
+}
+
+.category-tag {
+  @apply inline-block px-2 py-1 rounded-full text-xs font-bold uppercase bg-blue-500 text-white mr-2;
+}
+
+/* Enhanced Dark Mode Styles */
+.dark .task-item {
+    @apply bg-gray-700;
+}
+
+.dark .subtask-item {
+    @apply bg-gray-600;
+}
+
+.dark .text-muted-foreground {
+    @apply text-gray-400;
+}
+
+.dark .category-tag {
+    @apply bg-blue-700;
+}
+
+.dark .bg-secondary {
+    @apply bg-gray-800;
+}
+
+/* Gradient Animation Enhancements */
+@keyframes animatedGradient {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+.animated-gradient {
+    background: linear-gradient(270deg, #FF00FF, #00FFFF);
+    background-size: 400% 400%;
+    animation: animatedGradient 10s ease infinite;
+}
+
+/* Enhanced accent color for interactive elements */
+.accent-purple {
+    color: #A020F0;
+}
+
+/* Subtle shadow for depth */
+.shadow-depth {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}

@@ -20,15 +20,31 @@ import {
 import {suggestTaskPriority} from '@/ai/flows/suggest-task-priority';
 import {DragDropContext, Droppable, Draggable} from 'react-beautiful-dnd';
 import {useToast} from '@/hooks/use-toast';
-import {Switch} from "@/components/ui/switch";
-import {cn} from "@/lib/utils";
+import {Switch} from '@/components/ui/switch';
+import {cn} from '@/lib/utils';
+import {Calendar} from '@/components/ui/calendar';
+import {Popover, PopoverContent, PopoverTrigger} from '@/components/ui/popover';
+import {CalendarIcon} from 'lucide-react';
+import {format} from 'date-fns';
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/components/ui/select';
+
+type Subtask = {
+  id: string;
+  description: string;
+  completed: boolean;
+};
 
 type Task = {
   id: string;
   description: string;
   priority: 'low' | 'medium' | 'high';
   completed: boolean;
+  subtasks: Subtask[];
+  dueDate?: Date;
+  category: string;
 };
+
+const categories = ['Work', 'Personal', 'Home', 'Errands'];
 
 export default function Home() {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -37,18 +53,18 @@ export default function Home() {
     {priority: 'low' | 'medium' | 'high'; reasoning: string} | null
   >(null);
   const [darkMode, setDarkMode] = useState(false);
+  const [newSubtaskDescription, setNewSubtaskDescription] = useState('');
+  const [selectedDueDate, setSelectedDueDate] = useState<Date | undefined>(undefined);
+  const [selectedCategory, setSelectedCategory] = useState(categories[0]);
 
   useEffect(() => {
-        // Get the user's preference from localStorage
-        const storedDarkMode = localStorage.getItem('darkMode') === 'true';
-        setDarkMode(storedDarkMode);
-
-        // Add or remove the "dark" class based on localStorage
-        if (storedDarkMode) {
-          document.documentElement.classList.add('dark');
-        } else {
-          document.documentElement.classList.remove('dark');
-        }
+    const storedDarkMode = localStorage.getItem('darkMode') === 'true';
+    setDarkMode(storedDarkMode);
+    if (storedDarkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
   }, []);
 
   useEffect(() => {
@@ -64,10 +80,15 @@ export default function Home() {
         description: newTaskDescription,
         priority: prioritySuggestion?.priority || 'medium',
         completed: false,
+        subtasks: [],
+        dueDate: selectedDueDate,
+        category: selectedCategory,
       };
       setTasks([...tasks, newTask]);
       setNewTaskDescription('');
       setPrioritySuggestion(null);
+      setSelectedDueDate(undefined);
+      setNewSubtaskDescription('');
       toast({
         title: 'Task Added',
         description: 'Your task has been added to the list.',
@@ -111,20 +132,50 @@ export default function Home() {
     setTasks(items);
   };
 
-    const toggleDarkMode = (checked: boolean) => {
-        setDarkMode(checked);
-        localStorage.setItem('darkMode', checked.toString());
+  const toggleDarkMode = (checked: boolean) => {
+    setDarkMode(checked);
+    localStorage.setItem('darkMode', checked.toString());
+    if (checked) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  };
 
-        // Add or remove the "dark" class based on the switch
-        if (checked) {
-            document.documentElement.classList.add('dark');
-        } else {
-            document.documentElement.classList.remove('dark');
+  const addSubtask = (taskId: string) => {
+    if (newSubtaskDescription.trim() !== '') {
+      const newSubtask: Subtask = {
+        id: crypto.randomUUID(),
+        description: newSubtaskDescription,
+        completed: false,
+      };
+      setTasks(
+        tasks.map(task =>
+          task.id === taskId ? {...task, subtasks: [...task.subtasks, newSubtask]} : task
+        )
+      );
+      setNewSubtaskDescription('');
+    }
+  };
+
+  const completeSubtask = (taskId: string, subtaskId: string) => {
+    setTasks(
+      tasks.map(task => {
+        if (task.id === taskId) {
+          return {
+            ...task,
+            subtasks: task.subtasks.map(subtask =>
+              subtask.id === subtaskId ? {...subtask, completed: !subtask.completed} : subtask
+            ),
+          };
         }
-    };
+        return task;
+      })
+    );
+  };
 
   return (
-    <main className={cn("flex min-h-screen flex-col items-center justify-start p-24", darkMode ? "dark" : "")}>
+    <main className={cn('flex min-h-screen flex-col items-center justify-start p-24', darkMode ? 'dark' : '')}>
       <h1 className="text-4xl font-semibold mb-6">
         <span className="gradient-text">Rappel de MAMAN CELI</span> 🥰
       </h1>
@@ -135,18 +186,57 @@ export default function Home() {
             value={newTaskDescription}
             onChange={e => setNewTaskDescription(e.target.value)}
             placeholder="Enter task description"
-            className="mb-2"
+            className="mb-2 shadow-depth"
           />
 
+          <div className="flex justify-between items-center mb-2">
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant={'outline'}
+                  className={cn(
+                    'justify-start text-left font-normal',
+                    !selectedDueDate && 'text-muted-foreground'
+                  )}
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {selectedDueDate ? format(selectedDueDate, 'PPP') : <span>Pick a date</span>}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={selectedDueDate}
+                  onSelect={setSelectedDueDate}
+                  disabled={date => date < new Date()}
+                  initialFocus
+                />
+              </PopoverContent>
+            </Popover>
+
+            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Select a category" />
+              </SelectTrigger>
+              <SelectContent>
+                {categories.map(category => (
+                  <SelectItem key={category} value={category}>
+                    {category}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
           <div className="flex justify-between items-center">
-            <Button onClick={addTask} className="bg-purple-a020f0 text-white">
+            <Button onClick={addTask} className="bg-purple-a020f0 text-white shadow-depth">
               Add Task
             </Button>
 
             {prioritySuggestion && (
               <AlertDialog>
                 <AlertDialogTrigger asChild>
-                  <Button variant="outline">
+                  <Button variant="outline" className="shadow-depth">
                     AI Suggestion:{' '}
                     <span className={`task-priority ${prioritySuggestion.priority}`}>
                       {prioritySuggestion.priority}
@@ -173,11 +263,15 @@ export default function Home() {
                           description: newTaskDescription,
                           priority: prioritySuggestion?.priority || 'medium',
                           completed: false,
+                          subtasks: [],
+                          dueDate: selectedDueDate,
+                          category: selectedCategory,
                         };
                         return [...prevTasks, newTask];
                       });
                       setNewTaskDescription('');
                       setPrioritySuggestion(null);
+                      setSelectedDueDate(undefined);
                     }}>
                       Accept
                     </AlertDialogAction>
@@ -208,7 +302,28 @@ export default function Home() {
                           completed={task.completed}
                           onComplete={completeTask}
                           onPriorityChange={changeTaskPriority}
+                          subtasks={task.subtasks}
+                          onCompleteSubtask={completeSubtask}
+                          dueDate={task.dueDate}
+                          category={task.category}
                         />
+                        <div className="flex items-center mt-2">
+                          <Input
+                            type="text"
+                            value={newSubtaskDescription}
+                            onChange={e => setNewSubtaskDescription(e.target.value)}
+                            placeholder="Add subtask"
+                            className="mr-2 shadow-depth"
+                          />
+                          <Button
+                            variant="secondary"
+                            size="sm"
+                            onClick={() => addSubtask(task.id)}
+                            className="shadow-depth"
+                          >
+                            Add Subtask
+                          </Button>
+                        </div>
                       </div>
                     )}
                   </Draggable>
@@ -218,20 +333,18 @@ export default function Home() {
             )}
           </Droppable>
         </DragDropContext>
-              <div className="flex items-center space-x-2">
-                <Switch
-                  id="dark-mode"
-                  checked={darkMode}
-                  onCheckedChange={toggleDarkMode}
-                />
-                <label
-                  htmlFor="dark-mode"
-                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                >
-                  Dark Mode
-                </label>
-              </div>
+
+        <div className="flex items-center space-x-2 mt-4">
+          <Switch id="dark-mode" checked={darkMode} onCheckedChange={toggleDarkMode} className="shadow-depth" />
+          <label
+            htmlFor="dark-mode"
+            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+          >
+            Dark Mode
+          </label>
+        </div>
       </div>
     </main>
   );
 }
+
