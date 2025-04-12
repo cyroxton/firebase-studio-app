@@ -19,6 +19,8 @@ import {
 } from '@/components/ui/alert-dialog';
 import {suggestTaskPriority} from '@/ai/flows/suggest-task-priority';
 import {DragDropContext, Droppable, Draggable} from 'react-beautiful-dnd';
+import {useToast} from '@/hooks/use-toast';
+import {Switch} from "@/components/ui/switch";
 
 type Task = {
   id: string;
@@ -34,6 +36,8 @@ export default function Home() {
     {priority: 'low' | 'medium' | 'high'; reasoning: string} | null
   >(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const {toast} = useToast();
+  const [darkMode, setDarkMode] = useState(false);
 
   useEffect(() => {
     if (newTaskDescription) {
@@ -52,6 +56,10 @@ export default function Home() {
       setTasks([...tasks, newTask]);
       setNewTaskDescription('');
       setPrioritySuggestion(null);
+      toast({
+        title: 'Task Added',
+        description: 'Your task has been added to the list.',
+      });
     }
   };
 
@@ -93,7 +101,9 @@ export default function Home() {
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-start p-24">
-      <h1 className="text-4xl font-semibold mb-6 gradient-text">Rappel de MAMAN CELI 🥰</h1>
+      <h1 className="text-4xl font-semibold mb-6">
+        <span className="gradient-text">Rappel de MAMAN CELI</span> 🥰
+      </h1>
 
       <div className="w-full max-w-md">
         <div className="flex flex-col mb-4">
@@ -172,7 +182,23 @@ export default function Home() {
             )}
           </Droppable>
         </DragDropContext>
+              <div className="flex items-center space-x-2">
+                <Switch
+                  id="dark-mode"
+                  checked={darkMode}
+                  onCheckedChange={(checked) => {
+                    setDarkMode(checked);
+                  }}
+                />
+                <label
+                  htmlFor="dark-mode"
+                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                >
+                  Dark Mode
+                </label>
+              </div>
       </div>
     </main>
   );
 }
+
