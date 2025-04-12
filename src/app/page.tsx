@@ -202,7 +202,7 @@ export default function Home() {
       )}
     >
       <h1 className="text-4xl font-semibold mb-6">
-        <span className="gradient-text-name">Rappel de MAMAN CELI</span>{' '}🥰
+        <span className="gradient-text-name">Rappel de MAMAN CELI</span> 🥰
       </h1>
 
       <div className="w-full max-w-md">
